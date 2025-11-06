@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IN‑KluSo — Where information becomes immersion</title>
+  <meta name="description" content="IN‑KluSo: a living editorial ecosystem where strategy turns into story and information is felt." />
+  <style>
+    /* --- Design Tokens — swap hexes once final palette is approved --- */
+    :root {
+      --bg: #f5efe6;           /* warm neutral paper */
+      --text: #151515;         /* ink */
+      --muted: #6c6c6c;        /* captions */
+      --ink-copper: #d8731f;   /* brand slash accent */
+
+      --accent-core: #111111;  /* CORE */
+      --accent-thrust: #ff6a00;/* THRUST */
+      --accent-pulse: #00a8ff; /* PULSE */
+      --accent-flow: #d81b60;  /* FLOW */
+      --accent-axis: #ffd166;  /* AXIS */
+      --accent-ground: #22aa6f;/* GROUND */
+
+      --card-bg: #fff;         /* card surface */
+      --border: #e6dfd2;       /* subtle lines */
+      --shadow: rgba(0,0,0,.06);
+
+      --radius: 18px;
+      --space-1: .35rem;
+      --space-2: .65rem;
+      --space-3: 1rem;
+      --space-4: 1.5rem;
+      --space-5: 2.25rem;
+      --space-6: 3.5rem;
+
+      --maxw: 1200px;
+    }
+
+    /* Reader mode flips to pure black on white and single-column */
+    body.reader-mode {
+      --bg: #ffffff;
+      --text: #111111;
+      --card-bg: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+
+    /* Headline serif pairing */
+    .serif { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; }
+
+    a { color: inherit; text-underline-offset: 2px; }
+    img { max-width: 100%; display: block; }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: var(--space-4) var(--space-3) var(--space-6); }
+
+    /* Header */
+    header.site {
+      position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(150%) blur(8px);
+      background: color-mix(in oklab, var(--bg) 85%, white 15%);
+      border-bottom: 1px solid var(--border);
+    }
+    header .inner { display:flex; align-items:center; gap: var(--space-3); max-width: var(--maxw); margin: 0 auto; padding: var(--space-2) var(--space-3); }
+
+    .brand { font-weight: 800; letter-spacing: .5px; font-size: 1.15rem; display:flex; align-items:center; gap:.5ch; }
+    .brand .slash {
+      width: .8rem; height: 1.05rem; display:inline-block; background: linear-gradient(135deg, var(--ink-copper), color-mix(in oklab, var(--ink-copper) 70%, black 20%));
+      transform: skewX(-18deg); border-radius: 2px;
+    }
+
+    nav.primary { margin-left: auto; display:flex; gap: var(--space-3); flex-wrap: wrap; align-items:center; }
+    nav.primary a { text-decoration: none; padding: .35rem .55rem; border-radius: 999px; border: 1px solid transparent; }
+    nav.primary a:hover { border-color: var(--border); background: color-mix(in oklab, var(--card-bg) 85%, var(--border) 15%); }
+
+    .cta-row { display:flex; align-items:center; gap: var(--space-3); flex-wrap: wrap; }
+    .tagline { font-size: .9rem; color: var(--muted); }
+    .pill { font-size:.75rem; border:1px solid var(--border); padding:.2rem .5rem; border-radius:999px; }
+
+    /* Mischief column (left humor strip) */
+    .mischief {
+      position: fixed; inset: 0 auto 0 0; width: 56px; z-index: 60;
+      display:flex; flex-direction:column; align-items:stretch; background: #0e0e0e; color:#f5f5f5;
+      box-shadow: 2px 0 18px -8px rgba(0,0,0,.4);
+      transition: width .25s ease;
+    }
+    .mischief.open { width: 240px; }
+    .mischief .tease { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: .08em; text-transform: uppercase; font-weight:700; padding: .8rem .4rem; cursor:pointer; border:0; background: transparent; color:#f0f0f0; }
+    .mischief .content { display:none; padding: .9rem; gap:.75rem; overflow:auto; }
+    .mischief.open .content { display:flex; flex-direction:column; }
+    .mischief .badge { display:inline-block; padding:.2rem .5rem; border-radius:999px; background:#242424; color:#cfcfcf; font-size:.7rem; }
+    .mischief .quip { font-size:.9rem; color:#e6e6e6; }
+    .mischief .quip em { color: #ffa366; font-style: normal; }
+
+    @media (max-width: 960px){ .mischief { width: 44px; } .mischief.open { width: min(86vw, 320px); } }
+
+    /* Hero */
+    .hero { padding: var(--space-5) 0 var(--space-4); }
+    .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size:.8rem; color: var(--muted); }
+    .hero h1 { font-size: clamp(1.75rem, 4.6vw, 3rem); line-height: 1.05; margin: .25rem 0; }
+    .hero p { max-width: 58ch; color: var(--muted); margin-top: .3rem; }
+    .stripe { height: 6px; width: 120px; background: linear-gradient(90deg, var(--ink-copper), color-mix(in oklab, var(--ink-copper) 70%, #000 10%)); border-radius: 4px; }
+
+    /* Section grid */
+    .grid { display:grid; gap: var(--space-3); grid-template-columns: 1fr; margin-top: var(--space-3); }
+    @media (min-width: 680px){ .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 980px){ .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1260px){ .grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: clip; box-shadow: 0 8px 22px var(--shadow); transition: transform .18s ease, box-shadow .18s ease; position: relative; display:flex; flex-direction:column; min-height: 220px; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px var(--shadow); }
+    .card .pad { padding: var(--space-4); }
+    .card .kicker { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; opacity: .85; }
+    .card h3 { margin: .25rem 0 .35rem; font-size: 1.2rem; }
+    .card p { color: var(--muted); margin: 0; }
+    .card .bar { height: 6px; }
+
+    .core  .bar { background: var(--accent-core); }
+    .thrust .bar { background: var(--accent-thrust); }
+    .pulse  .bar { background: var(--accent-pulse); }
+    .flow   .bar { background: var(--accent-flow); }
+    .axis   .bar { background: var(--accent-axis); }
+    .ground .bar { background: var(--accent-ground); }
+
+    /* Footer */
+    footer { margin-top: var(--space-6); padding: var(--space-5) var(--space-3); border-top: 1px solid var(--border); color: var(--muted); }
+
+    /* Accessibility */
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#content">Skip to content</a>
+
+  <!-- Mischief strip: playful left column -->
+  <aside class="mischief" id="mischief">
+    <button class="tease" aria-controls="mischief" aria-expanded="false" title="Don’t look left. Seriously.">Don’t look left →</button>
+    <div class="content" aria-live="polite">
+      <span class="badge">Humor Column</span>
+      <p class="quip">If you’re reading this, you already <em>looked</em>. Journalists are busy calling out nonsense with impeccable timing—please hold our coffee.</p>
+      <p class="quip">Today’s micro‑rant: math isn’t mean; it’s just honest. We should try it more often in politics.</p>
+      <p class="quip">Rule #27: Scroll therapy > doomscrolling. Touch grass, then touch ideas.</p>
+    </div>
+  </aside>
+
+  <header class="site">
+    <div class="inner">
+      <div class="brand" aria-label="IN‑KluSo">
+        IN‑KluSo <span class="slash" aria-hidden="true"></span>
+      </div>
+      <nav class="primary" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#archive">Archive</a>
+        <a href="#community">Community</a>
+        <a href="#networks">Networks</a>
+        <button id="readerToggle" class="pill" title="Toggle reader mode">Reader</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content" class="wrap">
+    <div class="cta-row">
+      <span class="pill">attend • create • provide</span>
+      <span class="tagline">strategy for value creation</span>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">A living editorial ecosystem</div>
+      <h1 class="serif">Where information becomes <em>immersion</em>.</h1>
+      <div class="stripe" aria-hidden="true"></div>
+      <p>Strategy turns into story. Journalism, design, and culture speak the same language. Read, feel, explore.</p>
+    </section>
+
+    <!-- Section Grid (4‑column on wide screens) -->
+    <section class="grid" aria-label="Editorial sections">
+      <article class="card core">
+        <div class="bar" aria-hidden="true"></div>
+        <div class="pad">
+          <div class="kicker">CORE</div>
+          <h3 class="serif">Information is lived</h3>
+          <p>From impressions to emotional impact. Strategy becomes story and presence.</p>
+        </div>
+      </article>
+
+      <article class="card thrust">
+        <div class="bar" aria-hidden="true"></div>
+        <div class="pad">
+          <div class="kicker">THRUST</div>
+          <h3 class="serif">Capital with purpose</h3>
+          <p>Beyond returns—value measured in sustainability, equity, and meaning.</p>
+        </div>
+      </article>
+
+      <article class="card pulse">
+        <div class="bar" aria-hidden="true"></div>
+        <div class="pad">
+          <div class="kicker">PULSE</div>
+          <h3 class="serif">Beyond the logo</h3>
+          <p>Brands as living ecosystems. Identity becomes movement.</p>
+        </div>
+      </article>
+
+      <article class="card ground">
+        <div class="bar" aria-hidden="true"></div>
+        <div class="pad">
+          <div class="kicker">GROUND</div>
+          <h3 class="serif">Smart spaces</h3>
+          <p>From buildings to ecosystems—places that adapt, learn, and connect.</p>
+        </div>
+      </article>
+
+      <article class="card flow">
+        <div class="bar" aria-hidden="true"></div>
+        <div class="pad">
+          <div class="kicker">FLOW</div>
+          <h3 class="serif">The immersive power</h3>
+          <p>Data becomes a sensory language. Audiences participate, not just watch.</p>
+        </div>
+      </article>
+
+      <article class="card axis">
+        <div class="bar" aria-hidden="true"></div>
+        <div class="pad">
+          <div class="kicker">AXIS</div>
+          <h3 class="serif">Exponential creativity</h3>
+          <p>Imagination meets intention. Innovation as a language, not a tool.</p>
+        </div>
+      </article>
+    </section>
+
+    <section id="about" class="wrap" style="padding-left:0; padding-right:0;">
+      <div class="serif" style="margin-top: var(--space-6); font-size:1.15rem; max-width: 68ch;">
+        <h2 class="serif">About</h2>
+        <p>IN‑KluSo is Xtatik’s cultural and emotional voice—a connective editorial medium translating knowledge into experience.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap" style="padding-left:0; padding-right:0;">
+      <small>© IN‑KluSo. A publication of Xtatik. Built for mobile first. </small>
+    </div>
+  </footer>
+
+  <script>
+    // Mischief toggle
+    (function(){
+      const el = document.getElementById('mischief');
+      const btn = el.querySelector('.tease');
+      const set = (open) => {
+        el.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'Close ←' : 'Don’t look left →';
+      };
+      btn.addEventListener('click', () => set(!el.classList.contains('open')));
+    })();
+
+    // Reader mode toggle
+    (function(){
+      const btn = document.getElementById('readerToggle');
+      btn.addEventListener('click', () => {
+        document.body.classList.toggle('reader-mode');
+      });
+    })();
+  </script>
+</body>
+</html>
